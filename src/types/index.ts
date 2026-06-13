@@ -1,6 +1,7 @@
 export interface MenuItem {
   id: string;
   name: string;
+  type?: string;
 }
 
 export type MenuItemType = 'task' | 'process';

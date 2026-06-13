@@ -83,12 +83,23 @@
   border-radius: 8px;
   cursor: pointer;
   color: inherit;
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font: inherit;
   padding: 10px 12px;
   text-align: left;
   text-decoration: none;
   transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+.menu-item-icon {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.menu-list a.active .menu-item-icon {
+  opacity: 0.9;
 }
 
 .menu-list a:hover {
