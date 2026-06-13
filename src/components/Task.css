@@ -1,0 +1,43 @@
+.task-header {
+  background: #f8f8f8;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-bottom: 16px;
+  padding: 12px 16px;
+}
+
+.task-header__title {
+  color: #1f3245;
+  font-size: 20px;
+  font-weight: 600;
+  grid-column: 1 / -1;
+}
+
+.task-header__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.task-header__label {
+  color: #768287;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.task-header__value {
+  color: #434a4d;
+  font-size: 14px;
+}
+
+.no-form-state {
+  background: #f8f8f8;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 16px;
+}
