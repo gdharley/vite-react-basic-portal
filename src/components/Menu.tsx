@@ -39,9 +39,10 @@ function extractItems(result: unknown): MenuItem[] {
 
 export function Menu() {
   const [tasks, setTasks] = useState<MenuItem[]>([]);
-  const [processes, setProcesses] = useState<MenuItem[]>([]);
+  const [work, setWork] = useState<MenuItem[]>([]);
   const [taskSearch, setTaskSearch] = useState('');
-  const [processSearch, setProcessSearch] = useState('');
+  const [workSearch, setWorkSearch] = useState('');
+  const [workOpen, setWorkOpen] = useState(false);
   const { subscribe } = useMenuRefresh();
   const location = useLocation();
 
@@ -59,44 +60,44 @@ export function Menu() {
     return controller;
   }, []);
 
-  const loadProcesses = useCallback(() => {
+  const loadWork = useCallback(() => {
     const controller = new AbortController();
-    fetch('/process-api/repository/process-definitions?latest=true', {
+    fetch('/platform-api/work-definitions', {
       headers: { Authorization: AUTH_HEADER },
       signal: controller.signal,
     })
       .then((r) => r.json())
-      .then((data) => setProcesses(extractItems(data)))
+      .then((data) => setWork(extractItems(data)))
       .catch((err) => {
-        if ((err as Error).name !== 'AbortError') console.error('Failed to load processes', err);
+        if ((err as Error).name !== 'AbortError') console.error('Failed to load work definitions', err);
       });
     return controller;
   }, []);
 
   useEffect(() => {
     const taskCtrl = loadTasks();
-    const processCtrl = loadProcesses();
+    const workCtrl = loadWork();
 
     const interval = setInterval(() => { loadTasks(); }, 10000);
     const unsubscribe = subscribe(() => {
       loadTasks();
-      loadProcesses();
+      loadWork();
     });
 
     return () => {
       taskCtrl.abort();
-      processCtrl.abort();
+      workCtrl.abort();
       clearInterval(interval);
       unsubscribe();
     };
-  }, [loadTasks, loadProcesses, subscribe]);
+  }, [loadTasks, loadWork, subscribe]);
 
   const isActiveTask = (item: MenuItem) => {
     const match = location.pathname.match(/\/task\/([^/?#]+)/);
     return match ? decodeURIComponent(match[1]) === item.id : false;
   };
 
-  const isActiveProcess = (item: MenuItem) => {
+  const isActiveWork = (item: MenuItem) => {
     const match = location.pathname.match(/\/process\/([^/?#]+)/);
     return match ? decodeURIComponent(match[1]) === item.id : false;
   };
@@ -105,8 +106,8 @@ export function Menu() {
     (t) => !taskSearch.trim() || t.name.toLowerCase().includes(taskSearch.trim().toLowerCase())
   );
 
-  const filteredProcesses = processes.filter(
-    (p) => !processSearch.trim() || p.name.toLowerCase().includes(processSearch.trim().toLowerCase())
+  const filteredWork = work.filter(
+    (w) => !workSearch.trim() || w.name.toLowerCase().includes(workSearch.trim().toLowerCase())
   );
 
   return (
@@ -127,7 +128,7 @@ export function Menu() {
           {filteredTasks.map((task) => (
             <Link
               key={task.id}
-              to={`/task/${task.id}`}
+              to={`/task/${encodeURIComponent(task.id)}`}
               className={isActiveTask(task) ? 'active' : undefined}
             >
               {task.name}
@@ -137,28 +138,41 @@ export function Menu() {
       </section>
 
       <section className="menu-section">
-        <h2 className="menu-heading">
-          <span className="menu-heading__label">Processes</span>
-          <span className="menu-heading__count">{processes.length}</span>
-        </h2>
-        <input
-          type="search"
-          className="menu-search"
-          value={processSearch}
-          onChange={(e) => setProcessSearch(e.target.value)}
-          placeholder="Search processes"
-        />
-        <div className="menu-list">
-          {filteredProcesses.map((process) => (
-            <Link
-              key={process.id}
-              to={`/process/${process.id}`}
-              className={isActiveProcess(process) ? 'active' : undefined}
-            >
-              {process.name}
-            </Link>
-          ))}
-        </div>
+        <button
+          type="button"
+          className="menu-heading menu-heading--toggle"
+          onClick={() => setWorkOpen((o) => !o)}
+          aria-expanded={workOpen}
+        >
+          <span className="menu-heading__label">Work</span>
+          <span className="menu-heading__count">{work.length}</span>
+          <span className="menu-heading__chevron" aria-hidden="true">
+            {workOpen ? '▲' : '▼'}
+          </span>
+        </button>
+
+        {workOpen && (
+          <>
+            <input
+              type="search"
+              className="menu-search"
+              value={workSearch}
+              onChange={(e) => setWorkSearch(e.target.value)}
+              placeholder="Search work"
+            />
+            <div className="menu-list">
+              {filteredWork.map((item) => (
+                <Link
+                  key={item.id}
+                  to={`/process/${encodeURIComponent(item.id)}`}
+                  className={isActiveWork(item) ? 'active' : undefined}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+          </>
+        )}
       </section>
     </>
   );
