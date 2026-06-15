@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import type { Model } from '@flowable/forms';
+import type { FormProps } from '@flowable/forms/index-complete.js';
 
 interface FlwFormProps {
-  props: Model.CommonFormProps;
-  payload?: Model.Payload;
+  props: FormProps;
+  payload?: import('@flowable/forms').Model.Payload;
   debug?: boolean;
 }
 

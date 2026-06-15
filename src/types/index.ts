@@ -2,9 +2,18 @@ export interface MenuItem {
   id: string;
   name: string;
   type?: string;
+  appKey?: string;
 }
 
 export type MenuItemType = 'task' | 'process';
+
+export interface App {
+  key: string;
+  name: string;
+  color: string;
+  order: number;
+  items: MenuItem[];
+}
 
 export interface TaskDetails {
   name?: string;

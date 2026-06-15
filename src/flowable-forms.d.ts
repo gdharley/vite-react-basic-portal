@@ -6,8 +6,11 @@ declare module '@flowable/forms/index-complete.js' {
     form: Promise<unknown>;
   }
 
-  export function render(
-    element: HTMLElement,
-    props: Model.CommonFormProps & { payload?: Model.Payload; debug?: boolean }
-  ): RenderedForm;
+  export type FormProps = Model.CommonFormProps & {
+    payload?: Model.Payload;
+    debug?: boolean;
+    onChange?: (payload: Model.Payload, changed?: unknown) => void;
+  };
+
+  export function render(element: HTMLElement, props: FormProps): RenderedForm;
 }

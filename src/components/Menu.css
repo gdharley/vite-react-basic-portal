@@ -115,3 +115,49 @@
 .menu-list a.active:hover {
   background: #0b40a2;
 }
+
+/* App list items */
+
+.app-item {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  gap: 10px;
+  padding: 10px 12px;
+  text-align: left;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 100%;
+}
+
+.app-item:hover {
+  background: #f4f7ff;
+  border-color: #0f55d6;
+  box-shadow: 0 1px 4px rgba(15, 85, 214, 0.12);
+}
+
+.app-item__dot {
+  border-radius: 50%;
+  flex-shrink: 0;
+  height: 10px;
+  width: 10px;
+}
+
+.app-item__name {
+  color: #1f3245;
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.app-item__count {
+  background: #f0f0f0;
+  border-radius: 999px;
+  color: #768287;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+}
