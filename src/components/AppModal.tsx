@@ -7,9 +7,6 @@ import { FlwForm } from './FlwForm';
 import type { App, MenuItem } from '../types';
 import './AppModal.css';
 
-const CURRENT_USER_ID = (() => {
-  try { return atob(AUTH_HEADER.replace('Basic ', '')).split(':')[0]; } catch { return 'admin'; }
-})();
 
 function ProcessIcon() {
   return (
@@ -45,6 +42,7 @@ export function AppModal({ app, onClose, onWorkStarted }: AppModalProps) {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [formProps, setFormProps] = useState<FormProps | undefined>();
   const [search, setSearch] = useState('');
+  const [currentUserId, setCurrentUserId] = useState('');
   const { debug } = useFormDebug();
   const dialogRef = useRef<HTMLDivElement>(null);
   const latestPayloadRef = useRef<Model.Payload>({});
@@ -56,10 +54,17 @@ export function AppModal({ app, onClose, onWorkStarted }: AppModalProps) {
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
+  useEffect(() => {
+    fetch('/idm-api/current-user', { headers: { Authorization: AUTH_HEADER } })
+      .then((r) => r.ok ? r.json() : Promise.resolve(null))
+      .then((user: { id?: string } | null) => { if (user?.id) setCurrentUserId(user.id); })
+      .catch(() => undefined);
+  }, []);
+
   const startWork = (item: MenuItem, payload: Model.Payload, outcome: unknown) => {
     const isCase = item.type === 'case';
     const url = isCase ? '/platform-api/case-instances' : '/platform-api/process-instances';
-    const variables = { initiator: CURRENT_USER_ID, ...payload };
+    const variables = { initiator: currentUserId, ...payload };
     const body = isCase
       ? { ...variables, outcome, caseDefinitionId: item.id }
       : { ...variables, outcome, processDefinitionId: item.id };
